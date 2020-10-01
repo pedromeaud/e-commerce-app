@@ -22,14 +22,14 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage }).single('file');
 
-//=================================
-//             Product
-//=================================
+//|||||||||||||||||||||||||||||||||||
+//             Product             //
+//|||||||||||||||||||||||||||||||||||
 
 router.post('/uploadImage', auth, (req, res) => {
   // after getting the image from client
-  // we need to save it inside NodeServer
-  //Multer library
+  //  need to save it inside the NodeServer
+  // Multer
 
   upload(req, res, (err) => {
     if (err) return res.json({ success: false, err });
@@ -83,7 +83,7 @@ router.post('/getProducts', (req, res) => {
         res.status(200).json({ success: true, products, postSize: products.length });
       });
   } else {
-    Product.find(findArgs) // Populate  writer??
+    Product.find(findArgs) // Populate  writer
       .populate('writer')
       .sort([[sortBy, order]])
       .skip(skip)
