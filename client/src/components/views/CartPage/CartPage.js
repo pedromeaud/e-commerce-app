@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getCartItems, removeCardItem } from '../../../_actions/user_actions';
+import { getCartItems, removeCardItem, onSuccessBuy } from '../../../_actions/user_actions';
 import UserCardBlock from './Sections/UserCardBlock';
 import { Result, Empty } from 'antd';
 import Axios from 'axios';
+import Paypal from '../../utils/Paypal';
 
 function CartPage(props) {
   const dispatch = useDispatch();
@@ -55,6 +56,32 @@ function CartPage(props) {
     });
   };
 
+  const trasactionSuccess = (data) => {
+    let variables = {
+      cartDetail: props.user.cartDetail,
+      paymentData: data,
+    };
+
+    Axios.post('/api/users/successBuy', variables).then((response) => {
+      if (response.data.success) {
+        setShowSuccess(true);
+        setShowTotal(false);
+
+        dispatch(onSuccessBuy({ cart: response.data.cart, cartDetail: response.data.cartDetail }));
+      } else {
+        alert('Failed to buy it');
+      }
+    });
+  };
+
+  const transactionError = () => {
+    console.log('Paypal Error');
+  };
+
+  const transationCanceled = () => {
+    console.log('Transation canceled');
+  };
+
   return (
     <div style={{ width: '90%', margin: '2rem auto' }}>
       <h1>My Cart</h1>
@@ -82,6 +109,16 @@ function CartPage(props) {
           </div>
         )}
       </div>
+      {/*  Paypal BTN  */}
+
+      {ShowTotal && (
+        <Paypal
+          toPay={Total}
+          onSuccess={trasactionSuccess}
+          transactionError={transactionError}
+          transationCanceled={transationCanceled}
+        />
+      )}
     </div>
   );
 }

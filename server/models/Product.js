@@ -28,7 +28,7 @@ const ProductSchema = mongoose.Schema(
     },
     sold: {
       type: Number,
-      maxlength: 50,
+      maxlength: 100,
       default: 0,
     },
     views: {
